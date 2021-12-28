@@ -1,30 +1,28 @@
 package com.rpmsousa.abc;
 
-import android.graphics.ColorFilter;
-import android.graphics.Path;
+import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.Paint;
-import android.content.Context;
-
-import com.rpmsousa.abc.callback;
 
 
 public class Lettergrid extends Drawable {
-    private Paint mPaint;
-    private Typeface[] mTypeface;
-    private char[] mCharacters;
-    private static float LETTER_DENSITY = 0.8f;
-    private static float LETTER_SIZE = 300.0f;
+    private final Paint mPaint;
+    private final Typeface[] mTypeface;
+    private final char[] mCharacters;
+    private static final float LETTER_DENSITY = 0.8f;
+    private static final float LETTER_SIZE = 300.0f;
     private Letter[] mLettergrid;
     private boolean mfull = true;
     private boolean mplaying = false;
     private int mIndex;
     private float mLwidth, mLheight;
-    private Letterspeech mLetterspeech;
+    private final Letterspeech mLetterspeech;
 
     static private class Letter {
         public int typeface;
@@ -64,12 +62,9 @@ public class Lettergrid extends Drawable {
         if (mplaying)
             return false;
 
-        callback c = new callback() {
-            @Override
-            public void done(int status) {
-                mplaying = false;
-                System.out.println("Done talking");
-            }
+        callback c = status -> {
+            mplaying = false;
+            System.out.println("Done talking");
         };
 
         if (mfull) {
@@ -158,10 +153,7 @@ public class Lettergrid extends Drawable {
         mLwidth = wbounds.width() / n_width;
         mLheight = wbounds.height() / n_height;
 
-        if (wbounds.width() > wbounds.height())
-            l_size = wbounds.height();
-        else
-            l_size = wbounds.width();
+        l_size = Math.min(wbounds.width(), wbounds.height());
 
         for (int i = 0, k, l; i < mLettergrid.length; i++) {
 

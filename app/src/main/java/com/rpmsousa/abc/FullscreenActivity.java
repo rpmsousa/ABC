@@ -1,11 +1,11 @@
 package com.rpmsousa.abc;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -13,7 +13,6 @@ import android.widget.TextView;
  */
 public class FullscreenActivity extends AppCompatActivity {
     private ImageView mContentView;
-    private TextView mTextView;
     private Lettergrid mLettergrid;
 
     private void hide_system_ui() {

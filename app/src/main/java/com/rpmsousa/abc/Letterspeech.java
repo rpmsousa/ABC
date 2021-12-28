@@ -12,10 +12,9 @@ import java.util.Set;
 import java.lang.System;
 
 public class Letterspeech {
-    private TextToSpeech mSpeech;
+    private final TextToSpeech mSpeech;
     private ArrayList<Voice> mVoice;
-    private ProgressListener mProgressListener;
-    private HashMap<String, callback> mHash;
+    private final HashMap<String, callback> mHash;
 
     private class ProgressListener extends UtteranceProgressListener {
         @Override
@@ -73,23 +72,23 @@ public class Letterspeech {
             voiceset = mSpeech.getVoices();
             voice = voiceset.toArray(new Voice[0]);
 
-            mVoice = new ArrayList<Voice>(0);
+            mVoice = new ArrayList<>(0);
 
-            for (int i = 0; i < voice.length; i++) {
+            for (Voice value : voice) {
 
-                if (voice[i].isNetworkConnectionRequired())
+                if (value.isNetworkConnectionRequired())
                     continue;
 
-                if (voice[i].getQuality() < Voice.QUALITY_NORMAL)
+                if (value.getQuality() < Voice.QUALITY_NORMAL)
                     continue;
 
-                if (!voice[i].getLocale().getISO3Language().equals(locale.getISO3Language()))
+                if (!value.getLocale().getISO3Language().equals(locale.getISO3Language()))
                     continue;
 
-                if (!voice[i].getLocale().getISO3Country().equals(locale.getISO3Country()))
+                if (!value.getLocale().getISO3Country().equals(locale.getISO3Country()))
                     continue;
 
-                mVoice.add(voice[i]);
+                mVoice.add(value);
             }
         }
     }
@@ -98,9 +97,9 @@ public class Letterspeech {
         InitListener mInitListener = new InitListener();
         mSpeech = new TextToSpeech(context, mInitListener);
 
-        mHash = new HashMap<String, callback>();
+        mHash = new HashMap<>();
 
-        mProgressListener = new ProgressListener();
+        ProgressListener mProgressListener = new ProgressListener();
         mSpeech.setOnUtteranceProgressListener(mProgressListener);
      }
 
