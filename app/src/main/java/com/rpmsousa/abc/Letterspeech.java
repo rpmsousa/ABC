@@ -56,52 +56,67 @@ public class Letterspeech {
     private class InitListener implements TextToSpeech.OnInitListener {
         @Override
         public void onInit(int status) {
-            Set<Voice> voiceset;
-            Voice[] voice;
-            Locale locale = new Locale("pt", "PT");
+
+            //Locale locale = new Locale("pt", "PT");
             //Locale locale = new Locale("fr", "FR");
 
             mSpeech.setPitch(1.0f);
             mSpeech.setSpeechRate(1.0f);
 
+            set_language(mSpeech.getDefaultVoice().getLocale());
             //  if (mSpeech.isLanguageAvailable(locale_pt) == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE)
             //      mSpeech.setLanguage(locale_pt);
             //  else if (mSpeech.isLanguageAvailable(locale_fr) == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE)
-            mSpeech.setLanguage(locale);
-
-            voiceset = mSpeech.getVoices();
-            voice = voiceset.toArray(new Voice[0]);
-
-            mVoice = new ArrayList<>(0);
-
-            for (Voice value : voice) {
-
-                if (value.isNetworkConnectionRequired())
-                    continue;
-
-                if (value.getQuality() < Voice.QUALITY_NORMAL)
-                    continue;
-
-                if (!value.getLocale().getISO3Language().equals(locale.getISO3Language()))
-                    continue;
-
-                if (!value.getLocale().getISO3Country().equals(locale.getISO3Country()))
-                    continue;
-
-                mVoice.add(value);
-            }
+            //          mSpeech.setLanguage(locale);
         }
     }
 
     Letterspeech(Context context) {
         InitListener mInitListener = new InitListener();
-        mSpeech = new TextToSpeech(context, mInitListener);
 
         mHash = new HashMap<>();
 
+        mVoice = new ArrayList<>(0);
+
+        mSpeech = new TextToSpeech(context, mInitListener);
+
         ProgressListener mProgressListener = new ProgressListener();
         mSpeech.setOnUtteranceProgressListener(mProgressListener);
-     }
+
+        }
+
+    public void set_language(Locale locale) {
+        Set<Voice> voiceset;
+        Voice[] voice;
+
+        mSpeech.setLanguage(locale);
+
+        voiceset = mSpeech.getVoices();
+        voice = voiceset.toArray(new Voice[0]);
+
+        mVoice.clear();
+
+        for (Voice value : voice) {
+
+            if (value.isNetworkConnectionRequired())
+                continue;
+
+            if (value.getQuality() < Voice.QUALITY_NORMAL)
+                continue;
+
+            if (!value.getLocale().getISO3Language().equals(locale.getISO3Language()))
+                continue;
+
+            if (!value.getLocale().getISO3Country().equals(locale.getISO3Country()))
+                continue;
+
+            mVoice.add(value);
+        }
+    }
+
+    public Set<Locale> get_languages() {
+        return mSpeech.getAvailableLanguages();
+    }
 
     public void speak(String s, callback c) {
         int i = (int)(Math.random() * mVoice.size());
