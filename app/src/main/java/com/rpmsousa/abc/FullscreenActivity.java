@@ -1,11 +1,19 @@
 package com.rpmsousa.abc;
 
 import android.os.Bundle;
+import android.os.Build;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -14,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class FullscreenActivity extends AppCompatActivity {
     private ImageView mContentView;
     private Lettergrid mLettergrid;
+    ActionBar mActionBar;
 
     private void hide_system_ui() {
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -24,8 +33,31 @@ public class FullscreenActivity extends AppCompatActivity {
         );
     }
 
+    private void update_ui() {
+        ActivityManager activityManager = (ActivityManager) this.getSystemService(AppCompatActivity.ACTIVITY_SERVICE);
+        boolean isLockTaskModeRunning = false;
+        int mode;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mode = activityManager.getLockTaskModeState();
+            if (mode == ActivityManager.LOCK_TASK_MODE_PINNED || mode == ActivityManager.LOCK_TASK_MODE_LOCKED)
+                isLockTaskModeRunning = true;
+        } else {
+            isLockTaskModeRunning = activityManager.isInLockTaskMode();
+        }
+
+        if (isLockTaskModeRunning)
+            mActionBar.hide();
+        else
+            mActionBar.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Toolbar myToolbar;
+
+        View decorView;
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen);
@@ -36,17 +68,33 @@ public class FullscreenActivity extends AppCompatActivity {
         mLettergrid = new Lettergrid(this.getApplicationContext());
 
         mContentView.setImageDrawable(mLettergrid);
+
+        myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+        mActionBar = getSupportActionBar();
+
+        decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+
+                        update_ui();
+                    }
+                });
+
     }
-/*
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-*/
+
     @Override
     public void onWindowFocusChanged (boolean hasFocus) {
         if (hasFocus)
             hide_system_ui();
+    }
+
+    @Override
+    public void onUserInteraction () {
+        update_ui();
     }
 
     @Override
@@ -64,6 +112,8 @@ public class FullscreenActivity extends AppCompatActivity {
         int index;
         boolean res = false;
 
+        update_ui();
+
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             x = event.getX();
             y = event.getY();
@@ -80,13 +130,34 @@ public class FullscreenActivity extends AppCompatActivity {
 
         return true;
     }
-/*
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-   //     mTextView.setText("KEYCODE_BACK");
-        return false;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = this.getMenuInflater();
+        inflater.inflate(R.menu.app_bar, menu);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_pin:
+                this.startLockTask();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+/*
     @Override
     public void onBackPressed() {
  //       mTextView.setText("KEYCODE_BACK");

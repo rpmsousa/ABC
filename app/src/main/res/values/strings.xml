@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">ABC</string>
-
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_pin">Pin</string>
 </resources>
