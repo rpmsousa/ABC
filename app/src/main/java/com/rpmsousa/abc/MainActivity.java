@@ -2,7 +2,6 @@ package com.rpmsousa.abc;
 
 import android.os.Bundle;
 import android.os.Build;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +18,7 @@ import androidx.appcompat.widget.Toolbar;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private ImageView mContentView;
     private Lettergrid mLettergrid;
     ActionBar mActionBar;
@@ -60,7 +59,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_fullscreen);
+        setContentView(R.layout.main_activity);
 
         //       this.setShowWhenLocked(true);
 
