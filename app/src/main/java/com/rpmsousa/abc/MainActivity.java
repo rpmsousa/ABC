@@ -1,5 +1,6 @@
 package com.rpmsousa.abc;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Build;
 import android.app.ActivityManager;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -20,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
  */
 public class MainActivity extends AppCompatActivity {
     private ImageView mContentView;
+    private Letterspeech mSpeech;
     private Lettergrid mLettergrid;
     ActionBar mActionBar;
 
@@ -54,17 +57,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Toolbar myToolbar;
-
         View decorView;
 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
 
+        MainViewModel model = new ViewModelProvider(this).get(MainViewModel.class);
+        model.getUsers().observe(this, users -> {
+            // update UI
+        });
+
+
         //       this.setShowWhenLocked(true);
 
-        mContentView = findViewById(R.id.fullscreen_content);
-        mLettergrid = new Lettergrid(this.getApplicationContext());
+        mContentView = findViewById(R.id.main_view);
+        mSpeech = new Letterspeech(this.getApplicationContext());
+        mLettergrid = new Lettergrid(this.getApplicationContext(), mSpeech);
 
         mContentView.setImageDrawable(mLettergrid);
 
@@ -141,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, com.rpmsousa.abc.SettingsActivity.class);
+
+                startActivity(intent);
                 return true;
 
             case R.id.action_pin:

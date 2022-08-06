@@ -22,7 +22,7 @@ public class Lettergrid extends Drawable {
     private boolean mplaying = false;
     private int mIndex;
     private float mLwidth, mLheight;
-    private final Letterspeech mLetterspeech;
+    private static Letterspeech mLetterspeech;
 
     static private class Letter {
         public int typeface;
@@ -36,8 +36,8 @@ public class Lettergrid extends Drawable {
         public int r,g,b;
     }
 
-    Lettergrid(Context context) {
-        mLetterspeech = new Letterspeech(context);
+    Lettergrid(Context context, Letterspeech speech) {
+        mLetterspeech = speech;
 
         mPaint = new Paint();
 
